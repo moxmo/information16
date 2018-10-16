@@ -8,7 +8,7 @@ class Config(object):
     SECRET_KEY = "HI"
 
 
-    SQLALCHEMY_DATABASE_URI = "mysql://route:mysql@localhost:information16"
+    SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@localhost:3306/information16"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     REDIS_HOST = "127.0.0.1"
