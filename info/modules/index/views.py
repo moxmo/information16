@@ -1,31 +1,30 @@
+from flask import session
+
 from info import redis_store
+from info.models import User
 from . import index_blu
 from flask import render_template,current_app
 
 
 @index_blu.route("/")
 def helloworld():
+    #1取出session中用户编号
+    user_id = session.get("user_id")
+    #2.获取用户对象
+    user = None
+    if user_id:
+        try:
+            user = User.query.get(user_id)
+        except Exception as e:
+            current_app.logger.error(e)
 
-    #测试redis_store,存储数据
-    # redis_store.set("name","li")
-    # print(redis_store.get("name"))
+    #3.拼接用户数据渲染页面
+    data = {
+        # 如果user不为空,返回左边的内容, 为空返回右边内容
+        "user_info":user.to_dict() if user else ""
+    }
 
-    # session ["age"] = "13"
-    # print(session.get("age"))
-
-    #使用loggin日志模块输出内容
-    # logging.debug("调试信息1")
-    # logging.info("详细信息1")
-    # logging.warning("警告信息1")
-    # logging.error("错误信息1")
-
-    #上面的方式可以用current_app输出,在控制台输出时候有分割线,写入内容一样
-    # current_app.logger.debug("调试信息2")
-    # current_app.logger.info("详细信息2")
-    # current_app.logger.warning("警告信息2")
-    # current_app.logger.error("错误信息2")
-
-    return render_template("news/index.html")
+    return render_template("news/index.html",data=data)
 
 
 #处理网站logo

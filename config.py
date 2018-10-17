@@ -17,7 +17,7 @@ class Config(object):
     SESSION_TYPE = "redis"
     SESSION_REDIS = redis.StrictRedis(host=REDIS_HOST,port=REDIS_PORT)
     SESSION_USE_SIGNER = True
-    PERMANENT_SESSION_LIFETIME = 3600*24*2#两天期限
+    PERMANENT_SESSION_LIFETIME = 3600*24*2#两天期限,单位默认是秒
 
     LEVEL = logging.DEBUG
 #开发环境
