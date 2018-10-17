@@ -3,16 +3,16 @@
 from info.libs.yuntongxun.CCPRestSDK import REST
 
 # 说明：主账号，登陆云通讯网站后，可在"控制台-应用"中看到开发者主账号ACCOUNT SID
-_accountSid = '8a216da8662360a401667598245c202a'
+_accountSid = '8a216da8662360a401667cdfb6bc2828'
 
 # 说明：主账号Token，登陆云通讯网站后，可在控制台-应用中看到开发者主账号AUTH TOKEN
-_accountToken = '3120a2bf3d68494e91d1b7373409ce66'
+_accountToken = '72db17ca232f4c398677074f65f9fc57'
 
 # 请使用管理控制台首页的APPID或自己创建应用的APPID
-_appId = '8a216da8662360a4016676ad648221af'
+_appId = '8aaf070866235bc501667ce2e2ff3285'
 
 # 说明：请求地址，生产环境配置成app.cloopen.com
-_serverIP = 'sandboxapp.cloopen.com'
+_serverIP = 'app.cloopen.com'
 
 # 说明：请求端口 ，生产环境为8883
 _serverPort = "8883"

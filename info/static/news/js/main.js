@@ -182,13 +182,13 @@ $(function(){
             "sms_code":smscode,
             "password":password
         }
-        /*
+
         $.ajax({
             url:'/passport/register',
             type:'post',
             data:JSON.stringify(params),
             contentType:'application/json',
-            headers:{'X-CSRFToken':getCookie('csrf_token')},
+            // headers:{'X-CSRFToken':getCookie('csrf_token')},
             success: function (resp) {
                 //判断是否注册成功
                 if(resp.errno == '0'){
@@ -199,7 +199,7 @@ $(function(){
                 }
             }
         })
-        */
+
     })
 })
 
@@ -268,13 +268,13 @@ function sendSMSCode() {
     }
 
     //发送获取短信请求
-    /*
+
     $.ajax({
         url:'/passport/sms_code',//请求地址
         type:'post',
         data:JSON.stringify(params),
         contentType:'application/json',
-        headers:{'X-CSRFToken':getCookie('csrf_token')},
+        // headers:{'X-CSRFToken':getCookie('csrf_token')},
         success: function (resp) {
             //判断是否请求成功
             if(resp.errno == '0'){
@@ -309,7 +309,7 @@ function sendSMSCode() {
             }
         }
     })
-    */
+
 }
 
 // 调用该函数模拟点击左侧按钮
