@@ -1,7 +1,7 @@
 from flask import session, jsonify
 
 from info import redis_store
-from info.models import User, News
+from info.models import User, News, Category
 from info.utils.response_code import RET
 from . import index_blu
 from flask import render_template,current_app
@@ -29,11 +29,23 @@ def helloworld():
     for news in news_list:
         click_news_list.append(news.to_dict())
 
+    #2.3查询所有分类信息
+    try:
+        categories = Category.query.all()
+    except Exception as e:
+        current_app.logger.error(e)
+
+    #2.4将分类对象列表转成字典列表
+    category_list = []
+    for category in categories:
+        category_list.append(category.to_dict())
+
     #3.拼接用户数据渲染页面
     data = {
         # 如果user不为空,返回左边的内容, 为空返回右边内容
         "user_info":user.to_dict() if user else "",
-        "click_news_list":click_news_list
+        "click_news_list":click_news_list,
+        "categories":category_list
 
     }
 
