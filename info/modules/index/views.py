@@ -64,7 +64,7 @@ def news_list():
 
     # 6.返回响应
     return jsonify(errno=RET.OK,errmsg="获取成功")
-        
+
 
 @index_blu.route("/")
 def helloworld():
