@@ -11,6 +11,8 @@ from config import config_dict
 
 
 #定义redis_store
+from info.utils.commons import index_class
+
 redis_store = None
 
 #定义db
@@ -47,6 +49,9 @@ def create_app(config_name):
     #讲认证蓝图对象passport_blu注册到app中
     from info.modules.passport import passport_blue
     app.register_blueprint(passport_blue)
+
+    #将过滤器添加到默认过滤器列表中
+    app.add_template_filter(index_class,"index_class")
 
     #使用请求钩子,after_request拦截所有响应
     @app.after_request
