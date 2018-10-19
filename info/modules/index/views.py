@@ -1,8 +1,10 @@
+from flask import g
 from flask import request
 from flask import session, jsonify
 
 from info import redis_store
 from info.models import User, News, Category
+from info.utils.commons import user_login_data
 from info.utils.response_code import RET
 from . import index_blu
 from flask import render_template,current_app
@@ -61,16 +63,8 @@ def news_list():
 
 
 @index_blu.route("/")
+@user_login_data
 def helloworld():
-    #1取出session中用户编号
-    user_id = session.get("user_id")
-    #2.获取用户对象
-    user = None
-    if user_id:
-        try:
-            user = User.query.get(user_id)
-        except Exception as e:
-            current_app.logger.error(e)
 
     #2.1热门新闻,按照新闻点击量,查询前十条新闻
     try:
@@ -97,7 +91,7 @@ def helloworld():
     #3.拼接用户数据渲染页面
     data = {
         # 如果user不为空,返回左边的内容, 为空返回右边内容
-        "user_info":user.to_dict() if user else "",
+        "user_info":g.user.to_dict() if g.user else "",
         "click_news_list":click_news_list,
         "categories":category_list
 
