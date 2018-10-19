@@ -24,8 +24,19 @@ def news_detail(news_id):
     #判断新闻对象是否存在,后续会对404做统一处理
     if not news:
         abort(404)
+    # 2.1热门新闻,按照新闻点击量,查询前十条新闻
+    try:
+        news_list = News.query.order_by(News.clicks.desc()).limit(10).all()
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="获取新闻失败")
+    # 2.2将新闻列表对象,字典列表对象
+    click_news_list = []
+    for news in news_list:
+        click_news_list.append(news.to_dict())
     #携带新闻数据,到模板页面展示
     data = {
-        "news":news.to_dict()
+        "news":news.to_dict(),
+        "click_news_list":click_news_list
     }
     return render_template("news/detail.html",data=data)
