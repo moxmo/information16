@@ -16,15 +16,10 @@ from flask import render_template,current_app
 def news_list():
     """
     # 1.获取参数
-    #
     # 2.参数类型转换, 为了分页做准备, paginate(page, per_page, False)
-    #
     # 3.分页查询
-    #
     # 4.取出分页对象中的属性, 总页数, 当前页, 当前页对象
-    #
     # 5.将当前页对象列表, 转成字典列表
-    #
     # 6.返回响应
     :return:
     """
@@ -43,11 +38,11 @@ def news_list():
 
     # 3.分页查询
     try:
-        filters = []
+        condition = ""
         if cid != "1":
-            filters.append(News.category_id == cid)
+            condition = News.category_id == cid
 
-        paginate = News.query.filter(*filters).order_by(News.create_time.desc()).paginate(page,per_page,False)
+        paginate = News.query.filter(condition).order_by(News.create_time.desc()).paginate(page,per_page,False)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg="获取新闻失败")
@@ -56,14 +51,13 @@ def news_list():
     totalPage = paginate.pages
     currentPage = paginate.page
     items = paginate.items
-
     # 5.将当前页对象列表,转成字典列表
     newsList = []
     for item in items:
         newsList.append(item.to_dict())
 
     # 6.返回响应
-    return jsonify(errno=RET.OK,errmsg="获取成功")
+    return jsonify(errno=RET.OK,errmsg="获取成功",totalPage=totalPage,currentPage=currentPage,newsList=newsList)
 
 
 @index_blu.route("/")

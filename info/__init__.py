@@ -42,13 +42,17 @@ def create_app(config_name):
     #使用Session,关联app,指定存储位置
     Session(app)
 
-    #将首页蓝图对象index_blueprint注册到app
+    #将首页蓝图对象index_blue注册到app
     from info.modules.index import index_blu
     app.register_blueprint(index_blu)
 
-    #讲认证蓝图对象passport_blu注册到app中
+    #将认证蓝图对象passport_blu注册到app中
     from info.modules.passport import passport_blue
     app.register_blueprint(passport_blue)
+
+    #将新闻蓝图对象news_blue注册到app中
+    from info.modules.news import news_blue
+    app.register_blueprint(news_blue)
 
     #将过滤器添加到默认过滤器列表中
     app.add_template_filter(index_class,"index_class")
