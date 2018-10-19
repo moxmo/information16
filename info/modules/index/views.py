@@ -71,6 +71,7 @@ def helloworld():
             user = User.query.get(user_id)
         except Exception as e:
             current_app.logger.error(e)
+
     #2.1热门新闻,按照新闻点击量,查询前十条新闻
     try:
         news_list = News.query.order_by(News.clicks.desc()).limit(10).all()
