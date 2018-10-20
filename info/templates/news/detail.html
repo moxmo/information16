@@ -26,7 +26,7 @@
         <a href="javascript:;" class="collected block-center" data-newid="{{ data.news.id }}" style="display: {% if data.is_collected %}block{% else %}none{% endif %}"><span class="out">已收藏</span><span class="over">取消收藏</span></a>
 
         {% if data.user_info %}
-            <form action="" class="comment_form">
+            <form action="" class="comment_form" data-newsid="{{ data.news.id }}">
                 <div class="person_pic">
                     <img src="../../static/news/images/cat.jpg" alt="用户图标">
                 </div>
