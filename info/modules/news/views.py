@@ -148,9 +148,24 @@ def news_detail(news_id):
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg="获取评论失败")
 
+
+    #用户所有点过赞的评论
+    comment_likes = g.user.comment_likes
+
+    #取出所有点赞对象的评论编号
+    comment_ids = []
+    for comment_like in comment_likes:
+        comment_ids.append(comment_like.comment_id)
+
     # 2.5 将评论的对象列表,转成字典列表
     comment_list = []
     for comment in comments:
+
+        com_dict = comment.to_dict()
+        com_dict["is_like"] = False
+        if g.user and comment.id in comment_ids:
+            com_dict["is_like"] = True
+
         comment_list.append(comment.to_dict())
 
 
