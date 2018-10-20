@@ -16,6 +16,7 @@ from flask import render_template
 # 请求参数: news_id,action,g.user
 # 返回值: errno,errmsg
 @news_blue.route('/news_collect', methods=['POST'])
+@user_login_data
 def news_collect():
     # 1.判断用户登陆状态
     if not g.user:
@@ -39,10 +40,12 @@ def news_collect():
     # 6.判断新闻对象是否存在
     if not news:
         return jsonify(errno=RET.NODATA, errmsg="新闻不存在")
+
     try:
         # 7.根据操作类型, 收藏, 取消操作
         if action == "collect":
-            if news in g.user.collection_news:
+            if  not news in g.user.collection_news:
+                print("fasdfsafa")
                 g.user.collection_news.append(news)
         else:
             if news in g.user.collection_news:
