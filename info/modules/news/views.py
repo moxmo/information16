@@ -118,12 +118,12 @@ def news_detail(news_id):
 
     #根据新闻编号获取新闻对象
     try:
-        news = News.query.get(news_id)
+        new = News.query.get(news_id)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR,errmsg="新闻获取失败")
     #判断新闻对象是否存在,后续会对404做统一处理
-    if not news:
+    if not new:
         abort(404)
     # 2.1热门新闻,按照新闻点击量,查询前十条新闻
     try:
@@ -137,14 +137,30 @@ def news_detail(news_id):
         click_news_list.append(news.to_dict())
     #2.3判断用户是否收藏了该新闻
     is_collected = False
-    if g.user and news in g.user.collection_news:
+    if g.user and new in g.user.collection_news:
         is_collected = True
+
+    #2.4获取该新闻所有评论数据
+    try:
+        comments = Comment.query.filter(Comment.news_id == news_id).order_by(Comment.create_time.desc()).all()
+
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="获取评论失败")
+
+    # 2.5 将评论的对象列表,转成字典列表
+    comment_list = []
+    for comment in comments:
+        comment_list.append(comment.to_dict())
+
+
 
     #携带新闻数据,到模板页面展示
     data = {
-        "news":news.to_dict(),
+        "news":new.to_dict(),
         "click_news_list":click_news_list,
         "user_info": g.user.to_dict() if g.user else "",
-        "is_collected":is_collected
+        "is_collected":is_collected,
+        "comments":comment_list
     }
     return render_template("news/detail.html",data=data)
