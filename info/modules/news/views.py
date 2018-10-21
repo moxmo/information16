@@ -49,8 +49,9 @@ def comment_like():
             comment_like = CommentLike.query.filter(CommentLike.user_id == g.user.id,CommentLike.comment_id ==comment_id).first()
             if not comment_like:
                 #创建点赞对象
-                comment_like = CommentLike
-                comment_like.user_id = comment_id
+                comment_like = CommentLike()
+                comment_like.user_id = g.user.id
+                comment_like.comment_id = comment_id
                 #保存点赞对象到数据库
                 db.session.add(comment_like)
                 db.session.commit()
@@ -58,14 +59,13 @@ def comment_like():
                 comment.like_count +=1
         else:
             # 判断用户是否点过赞
-            comment_like = CommentLike.query.filter(CommentLike.user_id == g.user.id,
-                                                    CommentLike.comment_id == comment_id).first()
+            comment_like = CommentLike.query.filter(CommentLike.user_id == g.user.id,CommentLike.comment_id == comment_id).first()
             if not comment_like:
                 # 移除点赞对象
                 db.session.delete(comment_like)
                 db.session.commit()
 
-                if comment.like_count>0:
+                if comment.like_count > 0:
                     comment.like_count -= 1
     except Exception as e:
         current_app.logger.error(e)
