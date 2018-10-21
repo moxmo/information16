@@ -10,5 +10,6 @@ from flask import render_template
 # 返回值: user.html页面,用户字典data 数据
 @user_blue.route('/info')
 def user_info():
-    data ={}
+
+    data = {}
     return render_template("news/user.html",data=data)
