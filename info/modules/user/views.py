@@ -3,16 +3,49 @@ from flask import g, jsonify
 from flask import redirect
 from flask import request
 
-from info.models import News
+from info.models import News, Category
 from info.utils.commons import user_login_data
 from info.utils.response_code import RET
 from . import user_blue
 from flask import render_template
 
+#- 新闻发布
+# 请求路径: /user/news_release
+# 请求方式: GET,  POST
+# 请求参数:GET无,  POST,title,category_id,digest,index_image,content
+# 返回值: GET请求,user_news_release.html,data分类列表字段数据,POST,errno,errmsg
+@user_blue.route('/news_release', methods=['GET', 'POST'])
+def news_release():
+    #   - 0.判断是否是GET请求,携带分类数据展示
+    if request.method =="GET":
+
+        try:
+            categories = Category.query.all()
+        except Exception as e:
+            current_app.logger.error(e)
+            return jsonify(errno=RET.DBERR,errmsg="获取分类失败")
+
+        #分类对象列表  转字典列表
+        category_list = []
+        for category in categories:
+            category_list.append(category.to_dict())
+
+        return render_template("news/user_news_release.html",categories=category_list)
+
+    # - 1.如果是POST,获取参数
+  # - 2.校验参数,为空校验
+  # - 3.上传新闻图片
+  # - 4.判断图片是否上传成功
+  # - 5.创建新闻对象,设置新闻属性
+  # - 6.保存到数据库
+  # - 7.返回响应
+
+
+
 #- 获取收藏新闻
 # 请求路径: /user/collection
-# 请求方式: GET
-# 请求参数:page  页数
+# 请求方式: GET,POST
+# 请求参数:p  页数
 # 返回值: user_collection.html页面,携带新闻数据data
 @user_blue.route('/collection')
 @user_login_data
