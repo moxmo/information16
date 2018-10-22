@@ -3,21 +3,78 @@ from flask import g, jsonify
 from flask import redirect
 from flask import request
 
+from info import constants, db
 from info.models import News, Category
 from info.utils.commons import user_login_data
 from info.utils.response_code import RET
 from . import user_blue
 from flask import render_template
 
+#- 获取新闻发布列表
+# 请求路径: /user/news_list
+# 请求方式: GET
+# 请求参数:p
+# 返回值: GET渲染user_list.html页面
+@user_blue.route('/news_list')
+@user_login_data
+def news_list():
+
+  # - 1.获取参数
+    page = request.args.get("p","1")
+
+  # - 2.参数类型转换
+    try:
+        page = int(page)
+    except Exception as e:
+        page = 1
+
+  # - 3.分页查询
+    try:
+        paginate = News.query.filter(News.user_id == g.user.id).order_by(News.create_time.desc()).paginate(page,6,False)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR,errmsg="获取新闻失败")
+
+  # - 4.获取分页对象属性,总页数,当前页,当前页对象列表
+    totalPage = paginate.pages
+    currentPage = paginate.page
+    items = paginate.items
+
+  # - 5.对象列表转成字典列表
+    news_list = []
+    for news in items:
+        news_list.append(news.to_review_dict())
+
+  # - 6.携带数据渲染页面
+    data = {
+        "totalPage":totalPage,
+        "currentPage":currentPage,
+        "news_list":news_list
+    }
+    return render_template("news/user_news_list.html",data=data)
+
+
+
+
+
+
+
+
+
 #- 新闻发布
 # 请求路径: /user/news_release
 # 请求方式: GET,  POST
 # 请求参数:GET无,  POST,title,category_id,digest,index_image,content
 # 返回值: GET请求,user_news_release.html,data分类列表字段数据,POST,errno,errmsg
+def image_storage():
+    pass
+
+
 @user_blue.route('/news_release', methods=['GET', 'POST'])
+@user_login_data
 def news_release():
     #   - 0.判断是否是GET请求,携带分类数据展示
-    if request.method =="GET":
+    if request.method == "GET":
 
         try:
             categories = Category.query.all()
@@ -30,15 +87,54 @@ def news_release():
         for category in categories:
             category_list.append(category.to_dict())
 
-        return render_template("news/user_news_release.html",categories=category_list)
+        return render_template("news/user_news_release.html", categories=category_list)
 
     # - 1.如果是POST,获取参数
+    title = request.form.get("title")
+    category_id = request.form.get("category_id")
+    digest = request.form.get("digest")
+    # index_image = request.files.get("index_image")
+    content = request.form.get("content")
+
   # - 2.校验参数,为空校验
+    if not all([title,category_id,digest,content]):
+        return jsonify(errno=RET.PARAMERR,errmsg="参数不全")
+
+
   # - 3.上传新闻图片
-  # - 4.判断图片是否上传成功
+  #   try:
+  #      image_name = image_storage(index_image.read())
+  #   except Exception as e:
+  #       current_app.logger.error(e)
+  #       return jsonify(errno=RET.THIRDERR, errmsg="七牛云上传失败")
+  #
+  # # - 4.判断图片是否上传成功
+  #   if not image_name:
+  #       return jsonify(errno=RET.NODATA, errmsg="上传失败")
+
   # - 5.创建新闻对象,设置新闻属性
+    news = News()
+    news.title = title
+    news.source = g.user.nick_name
+    news.digest = digest
+    # news.index_image_url = constants.QINIU_DOMIN_PREFIX + image_name
+    news.content = content
+    news.category_id = category_id
+    news.user_id = g.user.id
+    news.status = 1
+
+
   # - 6.保存到数据库
+    try:
+        db.session.add(news)
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        return jsonify(errno=RET.DBERR, errmsg="新闻发布失败")
+
   # - 7.返回响应
+    return jsonify(errno=RET.OK, errmsg="发布成功")
 
 
 

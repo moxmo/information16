@@ -21,7 +21,7 @@
 
                 {% for category in categories %}
                     {% if category.id > 1 %}
-                        <option value="category.id">{{ category.name }}</option>
+                        <option value="{{ category.id }}">{{ category.name }}</option>
                     {% endif %}
 
                 {% endfor %}
