@@ -231,6 +231,13 @@ def news_detail(news_id):
 
         comment_list.append(comment.to_dict())
 
+    #判断当前登录的用户是否有关注该新闻的作者
+    is_followed = False
+    #用户要登录,该新闻有作者
+    if g.user and news.user:
+        #登录用户 在新闻作者的粉丝列表中
+        if g.user in news.user.followers:
+            is_followed = True
 
 
     #携带新闻数据,到模板页面展示
@@ -239,6 +246,7 @@ def news_detail(news_id):
         "click_news_list":click_news_list,
         "user_info": g.user.to_dict() if g.user else "",
         "is_collected":is_collected,
-        "comments":comment_list
+        "comments":comment_list,
+        "is_followed":True
     }
     return render_template("news/detail.html",data=data)
