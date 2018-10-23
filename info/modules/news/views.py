@@ -241,7 +241,7 @@ def news_detail(news_id):
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR,errmsg="新闻获取失败")
-    #判断新闻对象是否存在,后续会对404做统一处理
+    #2.判断新闻对象是否存在,后续会对404做统一处理
     if not new:
         abort(404)
     # 2.1热门新闻,按照新闻点击量,查询前十条新闻
@@ -268,8 +268,14 @@ def news_detail(news_id):
         return jsonify(errno=RET.DBERR, errmsg="获取评论失败")
 
 
-    #用户所有点过赞的评论
-    comment_likes = g.user.comment_likes
+    #用户所有点过赞对象列表
+    try:
+        comment_likes = []
+        if g.user:
+            comment_likes = g.user.comment_likes
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR,errmsg="获取点赞数据失败")
 
     #取出所有点赞对象的评论编号
     comment_ids = []
